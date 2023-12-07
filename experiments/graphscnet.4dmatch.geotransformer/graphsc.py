@@ -4,7 +4,6 @@ import ipdb
 import torch
 import torch.nn as nn
 from torch import Tensor
-
 from vision3d.layers import ConvBlock, FourierEmbedding, TransformerLayer
 from vision3d.ops import index_select, spatial_consistency
 

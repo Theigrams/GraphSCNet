@@ -3,7 +3,6 @@ import random
 from typing import Callable
 
 import numpy as np
-
 from vision3d.array_ops import (
     apply_transform,
     compose_transforms,
@@ -55,48 +54,28 @@ class TransformFunction(Callable):
             aug_transform = random_sample_small_transform()
             if random.random() > 0.5:
                 tgt_center = tgt_points.mean(axis=0)
-                subtract_center = get_transform_from_rotation_translation(
-                    None, -tgt_center
-                )
+                subtract_center = get_transform_from_rotation_translation(None, -tgt_center)
                 add_center = get_transform_from_rotation_translation(None, tgt_center)
-                aug_transform = compose_transforms(
-                    subtract_center, aug_transform, add_center
-                )
+                aug_transform = compose_transforms(subtract_center, aug_transform, add_center)
                 tgt_points = apply_transform(tgt_points, aug_transform)
                 tgt_corr_points = apply_transform(tgt_corr_points, aug_transform)
                 transform = compose_transforms(transform, aug_transform)
             else:
                 src_center = src_points.mean(axis=0)
-                subtract_center = get_transform_from_rotation_translation(
-                    None, -src_center
-                )
+                subtract_center = get_transform_from_rotation_translation(None, -src_center)
                 add_center = get_transform_from_rotation_translation(None, src_center)
-                aug_transform = compose_transforms(
-                    subtract_center, aug_transform, add_center
-                )
+                aug_transform = compose_transforms(subtract_center, aug_transform, add_center)
                 src_points = apply_transform(src_points, aug_transform)
                 src_corr_points = apply_transform(src_corr_points, aug_transform)
-                deformed_src_points = apply_transform(
-                    deformed_src_points, aug_transform
-                )
-                deformed_src_corr_points = apply_transform(
-                    deformed_src_corr_points, aug_transform
-                )
+                deformed_src_points = apply_transform(deformed_src_points, aug_transform)
+                deformed_src_corr_points = apply_transform(deformed_src_corr_points, aug_transform)
                 inv_aug_transform = inverse_transform(aug_transform)
                 transform = compose_transforms(inv_aug_transform, transform)
 
-            src_points += (
-                np.random.rand(src_points.shape[0], 3) - 0.5
-            ) * self.aug_noise
-            tgt_points += (
-                np.random.rand(tgt_points.shape[0], 3) - 0.5
-            ) * self.aug_noise
-            src_corr_points += (
-                np.random.rand(src_corr_points.shape[0], 3) - 0.5
-            ) * self.aug_noise
-            tgt_corr_points += (
-                np.random.rand(tgt_corr_points.shape[0], 3) - 0.5
-            ) * self.aug_noise
+            src_points += (np.random.rand(src_points.shape[0], 3) - 0.5) * self.aug_noise
+            tgt_points += (np.random.rand(tgt_points.shape[0], 3) - 0.5) * self.aug_noise
+            src_corr_points += (np.random.rand(src_corr_points.shape[0], 3) - 0.5) * self.aug_noise
+            tgt_corr_points += (np.random.rand(tgt_corr_points.shape[0], 3) - 0.5) * self.aug_noise
             scene_flows = deformed_src_points - src_points
             corr_scene_flows = deformed_src_corr_points - src_corr_points
 
@@ -110,9 +89,7 @@ class TransformFunction(Callable):
 
         # sample nodes
         src_points = data_dict["src_points"]
-        src_node_indices = furthest_point_sample(
-            src_points, min_distance=self.node_coverage
-        )
+        src_node_indices = furthest_point_sample(src_points, min_distance=self.node_coverage)
         data_dict["node_indices"] = src_node_indices.astype(np.int64)
         return data_dict
 
@@ -177,13 +154,8 @@ def run_test():
     import numpy as np
     from config import make_cfg
     from tqdm import tqdm
-
     from vision3d.array_ops import apply_transform
-    from vision3d.utils.open3d import (
-        draw_geometries,
-        get_color,
-        make_open3d_point_cloud,
-    )
+    from vision3d.utils.open3d import draw_geometries, get_color, make_open3d_point_cloud
     from vision3d.utils.tensor import tensor_to_array
 
     def visualize(points_f, points_c):
@@ -213,9 +185,7 @@ def run_test():
         aligned_src_points = apply_transform(deformed_src_points, transform)
 
         with profile_cpu_runtime("fps"):
-            fps_node_indices = furthest_point_sample(
-                src_points, min_distance=node_coverage
-            )
+            fps_node_indices = furthest_point_sample(src_points, min_distance=node_coverage)
         # fps_node_indices = data_dict["fps_node_indices"]
         fps_src_nodes = src_points[fps_node_indices]
 

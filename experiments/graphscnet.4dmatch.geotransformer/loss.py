@@ -1,7 +1,6 @@
 import ipdb
 import torch
 import torch.nn as nn
-
 from vision3d.loss import SigmoidFocalLossWithLogits
 from vision3d.ops import apply_deformation, apply_transform
 from vision3d.ops.metrics import (

@@ -3,7 +3,6 @@ import os
 import os.path as osp
 
 from easydict import EasyDict as edict
-
 from vision3d.utils.io import ensure_dir
 
 _C = edict()
@@ -117,9 +116,7 @@ def make_cfg():
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--link_output", dest="link_output", action="store_true", help="link output dir"
-    )
+    parser.add_argument("--link_output", dest="link_output", action="store_true", help="link output dir")
     args = parser.parse_args()
     return args
 
