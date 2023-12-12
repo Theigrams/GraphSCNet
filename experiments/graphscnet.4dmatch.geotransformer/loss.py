@@ -30,7 +30,9 @@ class LossFunction(nn.Module):
         local_corr_masks = output_dict["local_corr_masks"]
         local_corr_labels = labels[local_corr_indices]
         fc_labels = local_corr_labels.unsqueeze(2) * local_corr_labels.unsqueeze(1)
-        fc_masks = torch.logical_and(local_corr_masks.unsqueeze(2), local_corr_masks.unsqueeze(1))
+        local_corr_masks_resized = local_corr_masks.unsqueeze(2).expand(-1, -1, local_corr_masks.shape[1])
+        fc_masks = torch.logical_and(local_corr_masks_resized, local_corr_masks.unsqueeze(dim=1))
+        # fc_masks = torch.logical_and(local_corr_masks.unsqueeze(2), local_corr_masks.unsqueeze(1))
         loss_mat = (fc_mat - fc_labels).pow(2)
         c_loss = loss_mat[fc_masks].mean() * self.c_loss_weight
 
