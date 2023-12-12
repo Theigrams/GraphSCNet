@@ -109,6 +109,11 @@ _C.loss.focal_loss.weight = 1.0
 _C.loss.consistency_loss = edict()
 _C.loss.consistency_loss.weight = 1.0
 
+# psc
+_C.psc = edict()
+_C.psc.inlier_threshold = 0.05
+_C.psc.inlier_ratio = 0.6
+
 
 def make_cfg():
     return _C

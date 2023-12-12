@@ -28,7 +28,7 @@
             "cwd": "${workspaceFolder}/experiments/graphscnet.4dmatch.geotransformer"
         },
         {
-            "name": "Test4D",
+            "name": "TestRetrain",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/experiments/graphscnet.4dmatch.geotransformer/test.py",
@@ -36,8 +36,8 @@
             "justMyCode": true,
             "args": [
                 "--checkpoint=${workspaceFolder}/outputs/graphscnet.4dmatch.geotransformer/checkpoints/best_loss.pth",
-                "--benchmark=4DLoMatch-F",
-                // "--psc"
+                "--benchmark=4DMatch-F",
+                "--psc"
             ],
             "cwd": "${workspaceFolder}/experiments/graphscnet.4dmatch.geotransformer"
         },
