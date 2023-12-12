@@ -113,7 +113,7 @@ def train_valid_data_loader(cfg):
 
     valid_dataset = FourDMatchPairDataset(
         cfg.data.dataset_dir,
-        "4DMatch",
+        "4DMatch-F",
         transform_fn=TransformFunction(cfg, "4DMatch", False),
         use_augmentation=False,
         return_corr_indices=cfg.test.return_corr_indices,
