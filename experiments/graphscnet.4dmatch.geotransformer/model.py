@@ -31,6 +31,7 @@ class GraphSCNet(nn.Module):
             embedding_dim=cfg.model.transformer.embedding_dim,
             dropout=cfg.model.transformer.dropout,
             act_cfg=cfg.model.transformer.activation_fn,
+            cfg=cfg,
         )
 
         self.classifier = nn.Sequential(

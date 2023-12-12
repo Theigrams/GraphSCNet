@@ -6,6 +6,7 @@ from vision3d.utils.profiling import profile_cpu_runtime
 # isort: split
 from config import make_cfg
 from dataset import test_data_loader
+from loguru import logger
 from loss import EvalFunction
 from model import create_model
 
@@ -18,6 +19,11 @@ def add_custom_args():
         required=True,
         help="test benchmark",
     )
+    parser.add_argument(
+        "--psc",
+        help="use probabilistic spatial consistency",
+        action="store_true",
+    )
 
 
 class Tester(SingleTester):
@@ -29,6 +35,11 @@ class Tester(SingleTester):
             data_loader = test_data_loader(cfg, self.args.benchmark)
         self.register_loader(data_loader)
 
+        cfg.psc.use_prob_sc = self.args.psc
+        if cfg.psc.use_prob_sc:
+            logger.info(
+                f"Using prob_sc with inlier_threshold={cfg.psc.inlier_threshold}, inlier_ratio={cfg.psc.inlier_ratio}"
+            )
         # model
         model = create_model(cfg).cuda()
         self.register_model(model)

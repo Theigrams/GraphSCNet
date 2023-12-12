@@ -3,6 +3,7 @@ from typing import Optional, Union
 import ipdb
 import torch
 import torch.nn as nn
+from prob_sc import prob_spacial_consistency
 from torch import Tensor
 from vision3d.layers import ConvBlock, FourierEmbedding, TransformerLayer
 from vision3d.ops import index_select, spatial_consistency
@@ -22,6 +23,7 @@ class GraphSCModule(nn.Module):
         embedding_dim: int = 10,
         dropout: Optional[float] = None,
         act_cfg: Union[str, dict] = "ReLU",
+        cfg: Optional[dict] = None,
     ):
         super().__init__()
 
@@ -66,6 +68,9 @@ class GraphSCModule(nn.Module):
         for i in range(num_layers_per_block * num_blocks):
             layers.append(TransformerLayer(hidden_dim, num_heads, dropout=dropout, act_cfg=act_cfg))
         self.transformer = nn.ModuleList(layers)
+        self.use_prob_sc = cfg.psc.use_prob_sc
+        self.inlier_threshold = cfg.psc.inlier_threshold
+        self.inlier_ratio = cfg.psc.inlier_ratio
 
     def forward(
         self,
@@ -97,7 +102,12 @@ class GraphSCModule(nn.Module):
         # 2. spatial consistency
         local_src_corr_points = index_select(src_corr_points_norm, local_corr_indices, dim=0)  # (M, k, 3)
         local_tgt_corr_points = index_select(tgt_corr_points_norm, local_corr_indices, dim=0)  # (M, k, 3)
-        sc_weights = spatial_consistency(local_src_corr_points, local_tgt_corr_points, self.sigma_d)  # (M, k, k)
+        if self.use_prob_sc:
+            sc_weights = prob_spacial_consistency(
+                local_src_corr_points, local_tgt_corr_points, self.inlier_threshold, self.inlier_ratio
+            )
+        else:
+            sc_weights = spatial_consistency(local_src_corr_points, local_tgt_corr_points, self.sigma_d)  # (M, k, k)
 
         # 3. prepare for aggregation
         flat_local_corr_indices = local_corr_indices.view(-1)  # (Mxk)

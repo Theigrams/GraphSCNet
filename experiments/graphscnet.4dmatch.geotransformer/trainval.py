@@ -13,7 +13,7 @@ from model import create_model
 class Trainer(EpochBasedTrainer):
     def __init__(self, cfg):
         super().__init__(cfg)
-
+        cfg.psc.use_prob_sc = True
         # dataloader
         with profile_cpu_runtime("Data loader created"):
             train_loader, val_loader = train_valid_data_loader(cfg)
